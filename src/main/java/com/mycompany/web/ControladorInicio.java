@@ -25,8 +25,14 @@ public class ControladorInicio {
     public String inicio(Model model, @AuthenticationPrincipal User user) {
         List<Persona> personas = (List<Persona>) personaService.lstPersonas();
         log.info("ejecutando el controlador Spring MVC");
-        log.info("usuario que hizo login: "+user);
+        log.info("usuario que hizo login: " + user);
         model.addAttribute("personas", personas);
+        double saldoTotal = 0D;
+        for (Persona p : personas) {
+            saldoTotal += p.getSaldo();
+        }
+        model.addAttribute("saldoTotal", saldoTotal);
+        model.addAttribute("totalClientes", personas.size());
         return "index";
     }
 
@@ -35,9 +41,9 @@ public class ControladorInicio {
         return "modificar";
     }
 
-   @PostMapping("/guardar")
-    public String guardar(@Valid Persona persona, Errors errores){
-        if(errores.hasErrors()){
+    @PostMapping("/guardar")
+    public String guardar(@Valid Persona persona, Errors errores) {
+        if (errores.hasErrors()) {
             return "modificar";
         }
         personaService.guardar(persona);
